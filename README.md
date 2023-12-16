@@ -25,7 +25,7 @@ npm i -g yarn
 ### Step 2: 下载脚本源代码
 先用 git clone 源代码到本地
 ```bash
-git clone https://github.com/sfter/evm-inscription-mint.git
+git clone https://github.com/rench/evm-inscription-mint.git
 
 cd evm-inscription-mint
 ```
@@ -42,17 +42,38 @@ cp config.js.example config.js
 ### Step 4: 修改当前目录下的 config.js 配置文件
 ```javascript
 const config = {
-    // 你想要打多少张，这里就设置多少，建议单次别超过 50，不然容易不上链
-    repeatCount: 1,
+    // 你想要打多少张，这里就设置多少，可以设置大一点，现在的做法是每批次批量发送6次，一般会打在一个block里面，如果因为gas上涨，没有打包，会自动去给之前pending的交易加gas
+    repeatCount: 1000,
 
     // 在当前的 gas 基础上增加多少倍
-    increaseGas: 1.2,
+    increaseGas: 1.03,
+
+    // 每一笔交易停顿多久（毫秒为单位，1000=1秒）
+    sleepTime: 1000,
+
+    // 付费金额（默认为 0 转
+    payPrice: "0",
+    // 批量发送请求, 一般这个批次的请求会在一个区块, gas一样 都会被执行
+    batchCount: 6,
+
+    // gasLimit 最大上限, 一般同一类型交易gasLimit都一样，可以看别人打的limit是多少
+    gasLimit: 22008,
+
+    // gas 最大上限, 多个个Bone/ETH, 超过了就会等待，不会继续打
+    gasTotal: 0.00016,
 
     // 你钱包的私钥
-    privateKey: "",
+    privateKey: process.argv.slice(2)[0],
+
+    // 接收地址（也可以是合约地址），如果为空就是给自己发。
+    receiveAddress: "",
 
     // 铭文json数据（替换成你想打的铭文json格式数据）
-    tokenJson: 'data:,{"p":"fair-20","op":"mint","tick":"fair","amt":"1000"}',
+    //tokenJson: 'data:,{"p":"fair-20","op":"mint","tick":"fair","amt":"1000"}',
+	//tokenJson: data:,{"a":"NextInscription","p":"oprc-20","op":"mint","tick":"PoS","amt":"10"}
+    //tokenJson: 'data:,{"p":"src-20","op":"mint","tick":"meme","amt":"1000"}',
+    //tokenJson: 'data:,{"p":"src-20","op":"mint","tick":"pepe","amt":"10000000"}',
+    tokenJson: 'data:,{"p":"src-20","op":"mint","tick":"punk","amt":"100000000"}',
 
     // RPC结点（兼容 evm 链都行）打哪条链就用哪条链的节点地址
     // eth =>  https://mainnet.infura.io/v3
@@ -62,8 +83,17 @@ const config = {
     // linea => https://mainnet.infura.io/v3
     // scroll => https://rpc.scroll.io
     // zks => https://mainnet.era.zksync.io
-    rpcUrl: "https://arb1.arbitrum.io/rpc"
+    // bnbchain => https://bsc-dataseed1.bnbchain.org
+    // conflux = > https://evm.confluxrpc.com
+
+    // rpcUrl: "https://arb1.arbitrum.io/rpc"
+    // shib => https://rpc.shibrpc.com
+    // shib => https://www.shibrpc.com
+    rpcUrl: "https://www.shibrpc.com"
 }
+
+module.exports = config
+
 ```
 
 ### Step 5: 安装依赖包
