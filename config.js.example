@@ -11,13 +11,13 @@ const config = {
     // 付费金额（默认为 0 转
     payPrice: "0",
     // 批量发送请求, 一般这个批次的请求会在一个区块, gas一样 都会被执行
-    batchCount: 3,
+    batchCount: 6,
 
-    // gasLimit 最大上限, 一般同一类型交易gasLimit都一样，可以看别人打的limit是多少
-    gasLimit: 22008,
+    // gasLimit 最大上限
+    gasLimit: 22222,
 
-    // gas 最大上限, 多个个Bone/ETH, 超过了就会等待，不会继续打
-    gasTotal: 0.00016,
+    // gas 最大上限
+    gasTotal: 0.0003,
 
     // 你钱包的私钥
     privateKey: process.argv.slice(2)[0],
@@ -29,7 +29,8 @@ const config = {
     //tokenJson: 'data:,{"p":"fair-20","op":"mint","tick":"fair","amt":"1000"}',
 	//tokenJson: data:,{"a":"NextInscription","p":"oprc-20","op":"mint","tick":"PoS","amt":"10"}
     //tokenJson: 'data:,{"p":"src-20","op":"mint","tick":"meme","amt":"1000"}',
-    tokenJson: 'data:,{"p":"src-20","op":"mint","tick":"pepe","amt":"10000000"}',
+    //tokenJson: 'data:,{"p":"src-20","op":"mint","tick":"pepe","amt":"10000000"}',
+    tokenJson: 'data:,{"p":"src-20","op":"mint","tick":"punk","amt":"100000000"}',
 
     // RPC结点（兼容 evm 链都行）打哪条链就用哪条链的节点地址
     // eth =>  https://mainnet.infura.io/v3
@@ -43,6 +44,7 @@ const config = {
     // conflux = > https://evm.confluxrpc.com
 
     // rpcUrl: "https://arb1.arbitrum.io/rpc"
+
     // shib => https://rpc.shibrpc.com
     // shib => https://www.shibrpc.com
     rpcUrl: "https://www.shibrpc.com"
