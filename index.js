@@ -4,7 +4,7 @@ const readline = require('readline');
 const config = require("./config")
 
 // 连接到结点
-const provider = new ethers.providers.JsonRpcProvider(config.rpcUrl);
+let provider = new ethers.providers.JsonRpcProvider(config.rpcUrl);
 
 // 创建钱包
 let wallet
@@ -101,7 +101,7 @@ async function sendTransaction(nonce, gasPrice, balance) {
       console.error(`gas limit: ${gasLimit} > ${config.gasLimit} or gas total: ${gasTotal} > ${config.gasTotal} Bone`)
       return 'gas';
     }
-    if (parseFloat(balance) < parseFloat(gasTotal)) {
+    if (parseFloat(balance) !== 0 && parseFloat(balance) < parseFloat(gasTotal)) {
       console.error(`gasTotal: ${gasTotal} > ${balance} Bone`)
       return 'balance'
     }
@@ -152,10 +152,10 @@ let increaseGas = config.increaseGas;
 // 发送多次交易
 async function sendTransactions() {
   const sleepTime = config.sleepTime
-
+  console.log('start mint : ' + config.tokenJson);
   for (let i = 0; i < config.repeatCount;) {
     try {
-      const currentNonce = await getCurrentNonce(wallet);
+      let currentNonce = await getCurrentNonce(wallet);
       const latestNonce = await getLatestNonce(wallet);
       console.log(`current nonce pending: ${currentNonce} , latest: ${latestNonce}, exceptNonce: ${exceptNonce}`);
       if (currentNonce >= latestNonce + config.batchCount * 2 && exceptNonce === null) {
@@ -164,14 +164,16 @@ async function sendTransactions() {
         if (retryCount > config.batchCount) {
           // uppper gas to help pass
           exceptNonce = latestNonce;
-          increaseGas = config.increaseGas+ 0.03
+          increaseGas = config.increaseGas + 0.03
           console.log(`help to reset gas for ${exceptNonce}`)
           continue;
         }
         await sleep(sleepTime * 3)
         continue;
       }
-     
+      if (currentNonce == 0 && latestNonce != 0) {
+        currentNonce = latestNonce;
+      }
       let balance = ethers.utils.formatEther(await wallet.getBalance('latest'));
 
       // 获取实时 gasPrice
@@ -199,6 +201,8 @@ async function sendTransactions() {
       exceptNonce = null
       increaseGas = config.increaseGas
       retryCount = 0;
+      provider = new ethers.providers.JsonRpcProvider(config.rpcUrl);
+      wallet = new ethers.Wallet(config.privateKey.trim(), provider);
       await sleep(sleepTime)
     }
   }
